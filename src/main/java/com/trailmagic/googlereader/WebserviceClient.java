@@ -25,31 +25,31 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class GoogleFeedProcessor {
-    private static final Logger log = LoggerFactory.getLogger(GoogleFeedProcessor.class);
+public class WebserviceClient {
+    private static final Logger log = LoggerFactory.getLogger(WebserviceClient.class);
     private HttpFactory httpFactory;
     private HttpClient httpClient;
 
     @Autowired
-    public GoogleFeedProcessor(HttpClient httpClient, HttpFactory httpFactory) {
+    public WebserviceClient(HttpClient httpClient, HttpFactory httpFactory) {
         this.httpClient = httpClient;
         this.httpFactory = httpFactory;
     }
 
-    public <T> T processFeed(String feedUrl, EntityContentProcessor<T> processor) throws FeedProcessingFailedException {
-        HttpGet get = httpFactory.get(feedUrl);
-        log.debug("Fetching Google feed: {}", feedUrl);
+    public <T> T get(String url, EntityContentProcessor<T> processor) throws RequestFailedException {
+        HttpGet get = httpFactory.get(url);
+        log.debug("GET request: {}", url);
         try {
             HttpResponse response = httpClient.execute(get);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                log.debug("Got response for feed: {}, processing content", feedUrl);
+                log.debug("Got response for feed: {}, processing content", url);
                 HttpEntity httpEntity = response.getEntity();
                 InputStream content = httpEntity.getContent();
                 try {
                     InputStreamReader contentReader = new InputStreamReader(content);
                     try {
                         T result = processor.process(contentReader);
-                        log.debug("Finished processing content for feed: {}", feedUrl);
+                        log.debug("Finished processing content for: {}", url);
                         return result;
                     } finally {
                         contentReader.close();
@@ -59,12 +59,12 @@ public class GoogleFeedProcessor {
                     consumeContent(response);
                 }
             } else {
-                log.warn("Error response for feed {}, response body said: {}",
-                         feedUrl, EntityUtils.toString(response.getEntity()));
-                throw new FeedProcessingFailedException(feedUrl, response.getStatusLine().getStatusCode());
+                log.warn("Error response for GET {}, response body said: {}",
+                         url, EntityUtils.toString(response.getEntity()));
+                throw new RequestFailedException(url, response.getStatusLine().getStatusCode());
             }
         } catch (Exception e) {
-            throw new FeedProcessingFailedException(feedUrl, e);
+            throw new RequestFailedException(url, e);
         }
     }
 

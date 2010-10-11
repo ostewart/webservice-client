@@ -36,13 +36,13 @@ public class GoogleReaderClient {
     private GoogleReaderTokenClient tokenClient;
     private GoogleFeedArticleLinksProcessor feedArticleLinksProcessor;
     private Map<String, Date> seenFeeds = new HashMap<String, Date>();
-    private GoogleFeedProcessor feedProcessor;
+    private WebserviceClient feedProcessor;
     private GoogleReadStatusProcessor readStatusProcessor;
 
     @Autowired
     public GoogleReaderClient(GoogleClientLogin clientLogin, GoogleReaderTokenClient tokenClient,
                               GoogleFeedArticleLinksProcessor feedArticleLinksProcessor,
-                              GoogleFeedProcessor feedProcessor, GoogleReadStatusProcessor readStatusProcessor) {
+                              WebserviceClient feedProcessor, GoogleReadStatusProcessor readStatusProcessor) {
         this.clientLogin = clientLogin;
         this.tokenClient = tokenClient;
         this.feedArticleLinksProcessor = feedArticleLinksProcessor;
@@ -74,12 +74,12 @@ public class GoogleReaderClient {
     public void loadReadStatuses(int numArticles) throws GoogleReaderCommunicationException {
         try {
             Map<String, Boolean> newStatuses =
-                    feedProcessor.processFeed(RECENTLY_READ_URL + "?n=" + numArticles, readStatusProcessor);
+                    feedProcessor.get(RECENTLY_READ_URL + "?n=" + numArticles, readStatusProcessor);
             for (String googleId : newStatuses.keySet()) {
                 googleIdToReadStatusMap.put(googleId, newStatuses.get(googleId));
             }
             log.info("Loaded {} read articles from Google Reader", newStatuses.size());
-        } catch (FeedProcessingFailedException e) {
+        } catch (RequestFailedException e) {
             log.warn("Loading read articles failed: {}", e.getMessage());
         }
     }
@@ -92,7 +92,7 @@ public class GoogleReaderClient {
 
     public Map<String, String> loadFeedArticleLinks(final String feedUrl, int articlesCount) {
         Map<String, String> mappings =
-                feedProcessor.processFeed(FEED_BASE + urlEncode(feedUrl) + "?n=" + articlesCount,
+                feedProcessor.get(FEED_BASE + urlEncode(feedUrl) + "?n=" + articlesCount,
                                           feedArticleLinksProcessor);
         logMappings(mappings);
         linkToGoogleIdMap.putAll(mappings);

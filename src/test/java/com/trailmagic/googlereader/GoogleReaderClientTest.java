@@ -6,7 +6,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.jdom.JDOMException;
@@ -34,7 +33,6 @@ import static org.mockito.Mockito.when;
  */
 public class GoogleReaderClientTest {
     private GoogleReaderClient client;
-    @Mock private HttpClient httpClient;
     @Mock private GoogleClientLogin clientLogin;
     @Mock private HttpFactory httpFactory;
     @Mock private GoogleReaderTokenClient tokenClient;
@@ -44,7 +42,7 @@ public class GoogleReaderClientTest {
     @Mock private HttpGet get;
     @Mock private HttpEntity entity;
     @Mock private GoogleFeedArticleLinksProcessor feedArticleLinksProcessor;
-    @Mock private GoogleFeedProcessor feedProcessor;
+    @Mock private WebserviceClient feedProcessor;
     @Mock private GoogleReadStatusProcessor readStatusProcessor;
     private static final String ARTICLE_GOOGLE_ID = "tag:google.com,2005:reader/item/e5636a3f87610bd2";
     private static final String READ_ARTICLE_GOOGLE_ID = "tag:google.com,2005:reader/item/ebed01cf7178605b";
@@ -79,12 +77,12 @@ public class GoogleReaderClientTest {
     public void testLoadsFeedUrlMappings() throws Exception {
         Map<String, String> testMappings = new HashMap<String, String>();
         testMappings.put(ARTICLE_LINK, ARTICLE_GOOGLE_ID);
-        when(feedProcessor.processFeed(Mockito.anyString(), Mockito.any(GoogleFeedArticleLinksProcessor.class)))
+        when(feedProcessor.get(Mockito.anyString(), Mockito.any(GoogleFeedArticleLinksProcessor.class)))
                 .thenReturn(testMappings);
 
         Map<String, String> mappings = client.loadFeedArticleLinks(FEED_URL, 100);
 
-        Mockito.verify(feedProcessor).processFeed(Mockito.endsWith(FEED_URL_ENCODED + "?n=100"), Mockito.same(feedArticleLinksProcessor));
+        Mockito.verify(feedProcessor).get(Mockito.endsWith(FEED_URL_ENCODED + "?n=100"), Mockito.same(feedArticleLinksProcessor));
 
         assertEquals(ARTICLE_GOOGLE_ID, mappings.get(ARTICLE_LINK));
         assertEquals(ARTICLE_GOOGLE_ID, client.googleUrl(ARTICLE_LINK));
@@ -127,7 +125,7 @@ public class GoogleReaderClientTest {
 
         client.addFeedMapping(ARTICLE_LINK, READ_ARTICLE_GOOGLE_ID);
 
-        when(feedProcessor.processFeed(Mockito.endsWith("?n=10"), Mockito.eq(readStatusProcessor))).thenReturn(mappings);
+        when(feedProcessor.get(Mockito.endsWith("?n=10"), Mockito.eq(readStatusProcessor))).thenReturn(mappings);
         client.loadReadStatuses(10);
 
         assertTrue(client.isRead(ARTICLE_LINK));
@@ -145,7 +143,7 @@ public class GoogleReaderClientTest {
 
     @Test
     public void testLoadsFeedStatusesOnce() {
-        when(feedProcessor.processFeed(anyString(), eq(feedArticleLinksProcessor)))
+        when(feedProcessor.get(anyString(), eq(feedArticleLinksProcessor)))
                 .thenReturn(new HashMap<String, String>());
         client.loadFeedArticleLinksIfNecessary(FEED_LINK, 30);
         client.loadFeedArticleLinksIfNecessary(FEED_LINK, 30);
@@ -153,6 +151,6 @@ public class GoogleReaderClientTest {
         client.loadFeedArticleLinksIfNecessary(FEED_LINK, 30);
 
         Mockito.verify(feedProcessor, Mockito.times(1))
-                .processFeed(anyString(), Mockito.<EntityContentProcessor<Map<String, String>>>anyObject());
+                .get(anyString(), Mockito.<EntityContentProcessor<Map<String, String>>>anyObject());
     }
 }
