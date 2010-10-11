@@ -8,13 +8,18 @@ import org.mortbay.jetty.handler.AbstractHandler;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StubWebServer {
     private Server server;
     private MappingHandler handler = new MappingHandler();
+    private List<Expectation> expectations = new ArrayList<Expectation>();
 
     public void startOnPort(int port) throws Exception {
         server = new Server(port);
@@ -47,6 +52,33 @@ public class StubWebServer {
             }
         });
 
+    }
+
+    public void expectFilePostAtUrl(String path, final File file) {
+        final Expectation filePosted = new Expectation("File post to " + path);
+        final Expectation fileContentsMatch = new Expectation("Posted file contents match at url: " + path);
+        expectations.add(filePosted);
+        expectations.add(fileContentsMatch);
+
+        handler.registerHandler(path, new SimpleHandler() {
+            @Override
+            public void handle(String target, HttpServletRequest request, HttpServletResponse response) throws IOException {
+                filePosted.setSatisfied(true);
+
+                fileContentsMatch.setSatisfied(IOUtils.contentEquals(new FileInputStream(file), request.getInputStream()));
+            }
+        });
+    }
+
+    public void assertExpectationsMet() {
+        if (expectations.isEmpty()) {
+            throw new ExpectationFailedException("No expectations were set");
+        }
+        for (Expectation expectation : expectations) {
+            if (!expectation.isSatisfied()) {
+                throw new ExpectationFailedException("Failed " + expectation.toString());
+            }
+        }
     }
 
     private class MappingHandler extends AbstractHandler {

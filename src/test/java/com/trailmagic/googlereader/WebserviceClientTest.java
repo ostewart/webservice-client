@@ -8,7 +8,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.Reader;
+import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -46,6 +48,20 @@ public class WebserviceClientTest {
         webserver.registerUrl("/failure", 404);
 
         webserviceClient.get("http://localhost:8080/failure", new NoOpEntityContentProcessor());
+    }
+
+    @Test
+    public void testPostsFile() throws Exception {
+        webserver.startOnPort(8080);
+        webserver.expectFilePostAtUrl("/postFile", exampleFile());
+
+        webserviceClient.postFile("http://localhost:8080/postFile", exampleFile(), "application/octet-stream");
+
+        webserver.assertExpectationsMet();
+    }
+
+    private File exampleFile() throws URISyntaxException {
+        return new File(ClassLoader.getSystemResource("TEST_PORTRAIT.JPG").toURI());
     }
 
     @Test

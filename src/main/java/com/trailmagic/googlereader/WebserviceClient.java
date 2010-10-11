@@ -8,6 +8,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -79,6 +81,10 @@ public class WebserviceClient {
         HttpPost post = httpFactory.post(url);
         post.setEntity(httpFactory.urlEncodedFormEntity(mapToNameValuePairList(bodyParams)));
 
+        return executePost(post);
+    }
+
+    private int executePost(HttpPost post) {
         try {
             HttpResponse response = httpClient.execute(post);
             HttpEntity httpEntity = response.getEntity();
@@ -106,5 +112,12 @@ public class WebserviceClient {
         } else {
             log.warn("Not setting cookie {}; httpClient is not a DefaultHttpClient", authCookie);
         }
+    }
+
+    public void postFile(String url, File file, String contentType) {
+        final HttpPost post = httpFactory.post(url);
+        post.setEntity(new FileEntity(file, contentType));
+        
+        executePost(post);
     }
 }
