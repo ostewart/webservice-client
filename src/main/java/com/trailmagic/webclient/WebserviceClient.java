@@ -3,15 +3,20 @@ package com.trailmagic.webclient;
 import com.trailmagic.webclient.http.EntityContentProcessor;
 import com.trailmagic.webclient.http.HttpFactory;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.ExecutionContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,18 +86,26 @@ public class WebserviceClient {
         HttpPost post = httpFactory.post(url);
         post.setEntity(httpFactory.urlEncodedFormEntity(mapToNameValuePairList(bodyParams)));
 
-        return executePost(post);
+        return executePost(post).getStatusCode();
     }
 
-    private int executePost(HttpPost post) {
+    private WebResponse executePost(HttpPost post) {
         try {
-            HttpResponse response = httpClient.execute(post);
+            HttpContext context = new BasicHttpContext();
+            HttpResponse response = httpClient.execute(post, context);
             HttpEntity httpEntity = response.getEntity();
             if (httpEntity != null) {
                 httpEntity.consumeContent();
             }
 
-            return response.getStatusLine().getStatusCode();
+            final WebResponse finalResponse = new WebResponse();
+            finalResponse.setStatusCode(response.getStatusLine().getStatusCode());
+            HttpUriRequest request = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
+            HttpHost host = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
+            finalResponse.setUrl(host.toURI() + request.getURI());
+            finalResponse.setRedirected(!(finalResponse.getUrl().equals(post.getURI().toString()) || "POST".equals(request.getMethod())));
+
+            return finalResponse;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -114,10 +127,10 @@ public class WebserviceClient {
         }
     }
 
-    public void postFile(String url, File file, String contentType) {
+    public WebResponse postFile(String url, File file, String contentType) {
         final HttpPost post = httpFactory.post(url);
         post.setEntity(new FileEntity(file, contentType));
-        
-        executePost(post);
+
+        return executePost(post);
     }
 }

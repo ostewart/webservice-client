@@ -13,6 +13,7 @@ import java.io.Reader;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class WebserviceClientTest {
     private WebserviceClient webserviceClient;
@@ -61,14 +62,15 @@ public class WebserviceClientTest {
     }
 
     @Test
-    public void testFollowsRedirect() throws Exception {
+    public void testFollowsRedirectAndPopulatesResponseObject() throws Exception {
         webserver.startOnPort(8080);
         webserver.expectFilePostAtUrlAndFollowsRedirect("/postFile", exampleFile(), 303, "/newFile");
 
-        webserviceClient.postFile("http://localhost:8080/postFile", exampleFile(), "application/octet-stream");
+        WebResponse response = webserviceClient.postFile("http://localhost:8080/postFile", exampleFile(), "application/octet-stream");
 
         webserver.assertExpectationsMet();
-
+        assertTrue(response.isRedirected());
+        assertEquals("http://localhost:8080/newFile", response.getUrl());
     }
 
     private File exampleFile() throws URISyntaxException {
