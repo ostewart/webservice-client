@@ -1,6 +1,6 @@
-package com.trailmagic.googlereader;
+package com.trailmagic.webclient;
 
-import com.trailmagic.googlereader.http.HttpFactory;
+import com.trailmagic.webclient.http.HttpFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;

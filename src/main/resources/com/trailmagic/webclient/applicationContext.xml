@@ -6,7 +6,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
-    <context:component-scan base-package="com.trailmagic.googlereader"/>
+    <context:component-scan base-package="com.trailmagic.webclient"/>
 
     <bean name="schemeRegistry" class="org.apache.http.conn.scheme.SchemeRegistry"/>
     <bean id="httpParams" class="org.apache.http.params.BasicHttpParams"/>

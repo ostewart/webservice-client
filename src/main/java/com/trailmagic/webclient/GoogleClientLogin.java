@@ -1,4 +1,4 @@
-package com.trailmagic.googlereader;
+package com.trailmagic.webclient;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;

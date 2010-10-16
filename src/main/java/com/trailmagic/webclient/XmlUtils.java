@@ -1,4 +1,4 @@
-package com.trailmagic.googlereader;
+package com.trailmagic.webclient;
 
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -7,7 +7,6 @@ import org.jdom.xpath.XPath;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 
 /**
  * Created by: oliver on Date: Dec 20, 2009 Time: 4:52:48 PM

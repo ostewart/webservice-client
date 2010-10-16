@@ -1,4 +1,4 @@
-package com.trailmagic.googlereader;
+package com.trailmagic.webclient;
 
 /**
  * Created by: oliver on Date: Dec 14, 2009 Time: 8:34:01 PM

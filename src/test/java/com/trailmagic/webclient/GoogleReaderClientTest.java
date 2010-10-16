@@ -1,7 +1,7 @@
-package com.trailmagic.googlereader;
+package com.trailmagic.webclient;
 
-import com.trailmagic.googlereader.http.EntityContentProcessor;
-import com.trailmagic.googlereader.http.HttpFactory;
+import com.trailmagic.webclient.http.EntityContentProcessor;
+import com.trailmagic.webclient.http.HttpFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -48,7 +48,7 @@ public class GoogleReaderClientTest {
     private static final String READ_ARTICLE_GOOGLE_ID = "tag:google.com,2005:reader/item/ebed01cf7178605b";
     public static final String READER_TOKEN = "a3NqiiUBAAA.nd2QOvjmYxMXL1rd_t5LAw.kvfdwaucRm3nrVuWM7Ddyg";
     private static final String ARTICLE_ORIGINAL_ID = "tag:daringfireball.net,2009:/linked//6.18543";
-    private static final String TEST_FEED = "classpath:com/trailmagic/googlereader/testfeed.xml";
+    private static final String TEST_FEED = "classpath:com/trailmagic/webclient/testfeed.xml";
     private static final String ARTICLE_LINK = "http://online.wsj.com/article/SB10001424052748703757404574592530591075444.html";
     private static final String FEED_URL = "http://example.com/stuff.xml";
     private static final String FEED_URL_ENCODED = "http%3A%2F%2Fexample.com%2Fstuff.xml";

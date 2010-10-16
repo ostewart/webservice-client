@@ -1,4 +1,4 @@
-package com.trailmagic.googlereader;
+package com.trailmagic.webclient;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom.Document;
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
  * Created by: oliver on Date: Dec 20, 2009 Time: 4:34:45 PM
  */
 public class GoogleFeedArticleLinksProcessorTest {
-    private static final String TEST_FEED = "classpath:com/trailmagic/googlereader/testfeed.xml";
+    private static final String TEST_FEED = "classpath:com/trailmagic/webclient/testfeed.xml";
 
     @Test
     public void testExtractsIdsFromGoogleFeed() throws Exception {

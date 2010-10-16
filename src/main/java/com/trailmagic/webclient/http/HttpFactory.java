@@ -1,4 +1,4 @@
-package com.trailmagic.googlereader.http;
+package com.trailmagic.webclient.http;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;

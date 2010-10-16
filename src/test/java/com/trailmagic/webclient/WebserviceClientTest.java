@@ -1,7 +1,7 @@
-package com.trailmagic.googlereader;
+package com.trailmagic.webclient;
 
-import com.trailmagic.googlereader.http.EntityContentProcessor;
-import com.trailmagic.googlereader.http.HttpFactory;
+import com.trailmagic.webclient.http.EntityContentProcessor;
+import com.trailmagic.webclient.http.HttpFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.After;

@@ -1,4 +1,4 @@
-package com.trailmagic.googlereader;
+package com.trailmagic.webclient;
 
 import org.apache.commons.io.IOUtils;
 import org.mortbay.jetty.Request;

@@ -1,4 +1,4 @@
-package com.trailmagic.googlereader.http;
+package com.trailmagic.webclient.http;
 
 import java.io.Reader;
 

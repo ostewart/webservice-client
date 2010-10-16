@@ -1,4 +1,4 @@
-package com.trailmagic.googlereader;
+package com.trailmagic.webclient;
 
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.trailmagic.googlereader.XmlUtils.atomXPath;
+import static com.trailmagic.webclient.XmlUtils.atomXPath;
 
 
 /**
