@@ -60,6 +60,17 @@ public class WebserviceClientTest {
         webserver.assertExpectationsMet();
     }
 
+    @Test
+    public void testFollowsRedirect() throws Exception {
+        webserver.startOnPort(8080);
+        webserver.expectFilePostAtUrlAndFollowsRedirect("/postFile", exampleFile(), 303, "/newFile");
+
+        webserviceClient.postFile("http://localhost:8080/postFile", exampleFile(), "application/octet-stream");
+
+        webserver.assertExpectationsMet();
+
+    }
+
     private File exampleFile() throws URISyntaxException {
         return new File(ClassLoader.getSystemResource("TEST_PORTRAIT.JPG").toURI());
     }

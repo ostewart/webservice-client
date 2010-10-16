@@ -81,6 +81,38 @@ public class StubWebServer {
         }
     }
 
+    public void expectFilePostAtUrlAndFollowsRedirect(String path, final File file, final int redirectCode, final String redirectPath) {
+        final Expectation filePosted = new Expectation("File post to " + path);
+        final Expectation fileContentsMatch = new Expectation("Posted file contents match at url: " + path);
+        expectations.add(filePosted);
+        expectations.add(fileContentsMatch);
+
+        handler.registerHandler(path, new SimpleHandler() {
+            @Override
+            public void handle(String target, HttpServletRequest request, HttpServletResponse response) throws IOException {
+                filePosted.setSatisfied(true);
+                fileContentsMatch.setSatisfied(IOUtils.contentEquals(new FileInputStream(file), request.getInputStream()));
+
+                response.setStatus(redirectCode);
+                response.addHeader("Location", response.encodeRedirectURL(urlFromPath(redirectPath)));
+            }
+        });
+
+        final Expectation hitRedirect = new Expectation("Followed redirect to " + redirectPath);
+        expectations.add(hitRedirect);
+        handler.registerHandler(redirectPath, new SimpleHandler() {
+            @Override
+            public void handle(String target, HttpServletRequest request, HttpServletResponse response) throws IOException {
+                hitRedirect.setSatisfied(true);
+            }
+        });
+
+    }
+
+    private String urlFromPath(String redirectPath) {
+        return "http://localhost:" + server.getConnectors()[0].getPort() + redirectPath;
+    }
+
     private class MappingHandler extends AbstractHandler {
         private Map<String, SimpleHandler> handlerMap = new HashMap<String, SimpleHandler>();
 
