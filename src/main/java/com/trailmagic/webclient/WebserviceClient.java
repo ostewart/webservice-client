@@ -103,7 +103,7 @@ public class WebserviceClient {
             HttpUriRequest request = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
             HttpHost host = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
             finalResponse.setUrl(host.toURI() + request.getURI());
-            finalResponse.setRedirected(!(finalResponse.getUrl().equals(post.getURI().toString()) || "POST".equals(request.getMethod())));
+            finalResponse.setRedirected(!(finalResponse.getFinalUrl().equals(post.getURI().toString()) || "POST".equals(request.getMethod())));
 
             return finalResponse;
         } catch (IOException e) {

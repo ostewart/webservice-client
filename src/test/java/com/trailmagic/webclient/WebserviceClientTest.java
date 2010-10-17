@@ -18,6 +18,10 @@ import static org.junit.Assert.assertTrue;
 public class WebserviceClientTest {
     private WebserviceClient webserviceClient;
     private StubWebServer webserver;
+    private static final int SERVER_PORT = 8080;
+    private static final String URL_BASE = "http://localhost:8080";
+    private static final int HTTP_SEE_OTHER = 303;
+    private static final int HTTP_NOT_FOUND = 404;
 
     @Before
     public void setUp() {
@@ -32,10 +36,10 @@ public class WebserviceClientTest {
 
     @Test
     public void testGet() throws Exception {
-        webserver.startOnPort(8080);
+        webserver.startOnPort(SERVER_PORT);
         webserver.registerUrl("/nothing", "content");
 
-        assertEquals("content", webserviceClient.get("http://localhost:8080/nothing", new EntityContentProcessor<Object>() {
+        assertEquals("content", webserviceClient.get(URL_BASE + "/nothing", new EntityContentProcessor<Object>() {
             @Override
             public Object process(Reader content) throws Exception {
                 return IOUtils.toString(content);
@@ -45,32 +49,32 @@ public class WebserviceClientTest {
 
     @Test(expected = RequestFailedException.class)
     public void testThrowsExceptionOnNon200Response() throws Exception {
-        webserver.startOnPort(8080);
-        webserver.registerUrl("/failure", 404);
+        webserver.startOnPort(SERVER_PORT);
+        webserver.registerUrl("/failure", HTTP_NOT_FOUND);
 
-        webserviceClient.get("http://localhost:8080/failure", new NoOpEntityContentProcessor());
+        webserviceClient.get(URL_BASE + "/failure", new NoOpEntityContentProcessor());
     }
 
     @Test
     public void testPostsFile() throws Exception {
-        webserver.startOnPort(8080);
+        webserver.startOnPort(SERVER_PORT);
         webserver.expectFilePostAtUrl("/postFile", exampleFile());
 
-        webserviceClient.postFile("http://localhost:8080/postFile", exampleFile(), "application/octet-stream");
+        webserviceClient.postFile(URL_BASE + "/postFile", exampleFile(), "application/octet-stream");
 
         webserver.assertExpectationsMet();
     }
 
     @Test
     public void testFollowsRedirectAndPopulatesResponseObject() throws Exception {
-        webserver.startOnPort(8080);
-        webserver.expectFilePostAtUrlAndFollowsRedirect("/postFile", exampleFile(), 303, "/newFile");
+        webserver.startOnPort(SERVER_PORT);
+        webserver.expectFilePostAtUrlAndFollowsRedirect("/postFile", exampleFile(), HTTP_SEE_OTHER, "/newFile");
 
-        WebResponse response = webserviceClient.postFile("http://localhost:8080/postFile", exampleFile(), "application/octet-stream");
+        WebResponse response = webserviceClient.postFile(URL_BASE + "/postFile", exampleFile(), "application/octet-stream");
 
         webserver.assertExpectationsMet();
         assertTrue(response.isRedirected());
-        assertEquals("http://localhost:8080/newFile", response.getUrl());
+        assertEquals(URL_BASE + "/newFile", response.getFinalUrl());
     }
 
     private File exampleFile() throws URISyntaxException {

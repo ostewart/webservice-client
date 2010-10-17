@@ -12,7 +12,7 @@ public class WebResponse {
         return redirected;
     }
 
-    public String getUrl() {
+    public String getFinalUrl() {
         return url;
     }
 
