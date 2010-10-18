@@ -2,6 +2,7 @@ package com.trailmagic.webclient;
 
 import com.trailmagic.webclient.http.EntityContentProcessor;
 import com.trailmagic.webclient.http.HttpFactory;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -97,6 +98,9 @@ public class WebserviceClient {
             HttpResponse response = httpClient.execute(post, context);
             HttpEntity httpEntity = response.getEntity();
             if (httpEntity != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Ignoring POST response body: {}", IOUtils.toString(httpEntity.getContent()));
+                }
                 httpEntity.consumeContent();
             }
 

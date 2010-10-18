@@ -20,6 +20,7 @@ import java.security.cert.CertificateException;
 /**
  * Created by: oliver on Date: Dec 18, 2009 Time: 1:37:05 AM
  */
+@SuppressWarnings({"UnusedDeclaration"})
 @Service
 public class SchemeRegistryConfigurer {
     @Autowired
