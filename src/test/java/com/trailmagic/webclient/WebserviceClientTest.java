@@ -18,8 +18,8 @@ import static org.junit.Assert.assertTrue;
 public class WebserviceClientTest {
     private WebserviceClient webserviceClient;
     private StubWebServer webserver;
-    private static final int SERVER_PORT = 8080;
-    private static final String URL_BASE = "http://localhost:8080";
+    private static final int SERVER_PORT = 8090;
+    private static final String URL_BASE = "http://localhost:" + SERVER_PORT;
     private static final int HTTP_SEE_OTHER = 303;
     private static final int HTTP_NOT_FOUND = 404;
 

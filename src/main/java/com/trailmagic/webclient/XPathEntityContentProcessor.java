@@ -14,6 +14,7 @@ public abstract class XPathEntityContentProcessor<T> implements EntityContentPro
     @Override
     public T process(Reader content) throws Exception {
         SAXBuilder builder = new SAXBuilder();
+        builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         Document doc = builder.build(content);
 
         return processWithDocument(doc);

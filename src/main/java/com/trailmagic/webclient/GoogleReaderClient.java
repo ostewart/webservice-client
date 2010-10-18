@@ -139,7 +139,7 @@ public class GoogleReaderClient {
         params.put("T", readerToken);
 
 
-        int statusCode = feedProcessor.post(EDIT_READ_TAG_URL, params);
+        int statusCode = feedProcessor.post(EDIT_READ_TAG_URL, params).getStatusCode();
         if (statusCode != HttpStatus.SC_OK && log.isDebugEnabled()) {
             log.debug("Failed to set read status on article: {} (google id: {}); status code was : {}",
                       new Object[]{originalId, googleId, statusCode});

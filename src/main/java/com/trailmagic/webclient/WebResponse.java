@@ -5,7 +5,7 @@ package com.trailmagic.webclient;
  */
 public class WebResponse {
     private boolean redirected;
-    private String url;
+    private String finalUrl;
     private int statusCode;
 
     public boolean isRedirected() {
@@ -13,7 +13,7 @@ public class WebResponse {
     }
 
     public String getFinalUrl() {
-        return url;
+        return finalUrl;
     }
 
     public int getStatusCode() {
@@ -24,11 +24,16 @@ public class WebResponse {
         this.statusCode = statusCode;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setFinalUrl(String finalUrl) {
+        this.finalUrl = finalUrl;
     }
 
     public void setRedirected(boolean redirected) {
         this.redirected = redirected;
+    }
+
+    @Override
+    public String toString() {
+        return "WebResponse {redirected=" + redirected + "; finalUrl=" + finalUrl + "; statusCode=" + statusCode + "}";
     }
 }

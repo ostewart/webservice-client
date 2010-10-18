@@ -82,15 +82,17 @@ public class WebserviceClient {
         }
     }
 
-    public int post(String url, Map<String, String> bodyParams) {
+    public WebResponse post(String url, Map<String, String> bodyParams) {
         HttpPost post = httpFactory.post(url);
         post.setEntity(httpFactory.urlEncodedFormEntity(mapToNameValuePairList(bodyParams)));
 
-        return executePost(post).getStatusCode();
+        return executePost(post);
     }
 
     private WebResponse executePost(HttpPost post) {
         try {
+            log.debug("POST request: {}", post.getURI());
+
             HttpContext context = new BasicHttpContext();
             HttpResponse response = httpClient.execute(post, context);
             HttpEntity httpEntity = response.getEntity();
@@ -102,7 +104,7 @@ public class WebserviceClient {
             finalResponse.setStatusCode(response.getStatusLine().getStatusCode());
             HttpUriRequest request = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
             HttpHost host = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
-            finalResponse.setUrl(host.toURI() + request.getURI());
+            finalResponse.setFinalUrl(host.toURI() + request.getURI());
             finalResponse.setRedirected(!(finalResponse.getFinalUrl().equals(post.getURI().toString()) || "POST".equals(request.getMethod())));
 
             return finalResponse;

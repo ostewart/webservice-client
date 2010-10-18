@@ -96,6 +96,9 @@ public class GoogleReaderClientTest {
         client.addFeedMapping(ARTICLE_ORIGINAL_ID, ARTICLE_GOOGLE_ID);
 
         when(tokenClient.getReaderToken()).thenReturn(READER_TOKEN);
+        final WebResponse webResponse = new WebResponse();
+        webResponse.setStatusCode(200);
+        when(feedProcessor.post(Mockito.anyString(), Mockito.<Map<String, String>>any())).thenReturn(webResponse);
         client.init();
 
         client.markArticleAsRead(ARTICLE_ORIGINAL_ID);
